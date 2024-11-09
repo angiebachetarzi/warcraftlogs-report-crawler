@@ -21,7 +21,7 @@ const downloadReport = async () => {
     const bossId = await getBossId()
 
     const browser = await puppeteer.launch({
-        headless: true, //no need to have chromium open
+        headless: false, //no need to have chromium open
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     })
 
@@ -42,8 +42,13 @@ const downloadReport = async () => {
         timeout: 0 // Optional: sets an unlimited timeout (adjust if necessary)
     });
 
-    // Wait for the button to be available in the DOM
+    // in case of consent window opens too fast
+    const consentbtn = 'body > div.fc-consent-root > div.fc-dialog-container > div.fc-dialog.fc-choice-dialog > div.fc-footer-buttons-container > div.fc-footer-buttons > button.fc-button.fc-cta-consent.fc-primary-button'
+    await page.waitForSelector(consentbtn, { visible: true });
+    await page.click(consentbtn);
+
     await page.waitForSelector('#main-table-0_wrapper > div > button', { visible: true });
+    
     await page.click('#main-table-0_wrapper > div > button');
 
     // Wait until a file appears in the download directory
