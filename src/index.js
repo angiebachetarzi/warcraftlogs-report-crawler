@@ -1,41 +1,23 @@
-//handle arguments from app
-const yargs = require('yargs/yargs')
-const { hideBin } = require('yargs/helpers')
-const argv = yargs(hideBin(process.argv))
-  .option('reportId', {
-    alias: 'r', //use either --reportId=<report-id> or -r <report-id>
-    type: 'number',
-    description: 'The report ID',
-    demandOption: true //make the argument required
-  })
-  .option('bossName', {
-    alias: 'b',
-    type: 'number',
-    description: 'The name of the boss',
-    demandOption: true
-  })
-  .option('reportType', {
-    alias: 't',
-    type: 'string',
-    description: 'The type of the report',
-    demandOption: true,
-    choices: ['damage-taken', 'damage-done', 'healing', 'threat', 'auras', 'deaths', 'interrupts', 'dispels', 'ressources', 'casts'],
-    default: 'damage-taken'
-  })
-  .check((argv) => {
-    // Check that the arguments are not null or undefined
-    if (argv.reportId == null || argv.bossName == null || argv.reportType == null) {
-      throw new Error('All arguments must be present and not null');
-    }
-    return true; // Validation passed
-  })
-  .help('help')
-  .alias('help', 'h')
-  .wrap(null) // Adjusts output width for better readability
-  .argv;
+const keys = require('../keys')
+const axios = require('axios')
+const parseArgs = require('./argsHandler')
+const filterTab = require('./helpers')
+const puppeteer = require('puppeteer')
 
-if (argv.ships > 3 && argv.distance < 53.5) {
-  console.log('Plunder more riffiwobbles!')
-} else {
-  console.log('Retreat from the xupptumblers!')
+
+const argv = parseArgs()
+
+const getBossId = async () => {
+    const reportGeneralInfo = await axios.get(`https://www.warcraftlogs.com:443/v1/report/fights/${argv.reportId}?api_key=${keys.access_key}`);
+    return filterTab(reportGeneralInfo.data.fights, 'name', 'boss', argv.bossName)
 }
+
+//TODO: assert bossId is not null else throw error
+const bossId = getBossId()
+
+// Launch the browser and open a new blank page
+const browser = await puppeteer.launch();
+const page = await browser.newPage();
+
+// Navigate the page to a URL.
+await page.goto(`https://www.warcraftlogs.com/reports/${argv.reportId}#boss=${bossId}&difficulty=5&type=${argv.reportType}`);
