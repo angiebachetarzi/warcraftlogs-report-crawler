@@ -24,7 +24,7 @@ yarn
 ````
 5. Run the application
 ````
-yarn start -r <reportID> -b <bossName> -d <downloadPath>
+yarn start -r <reportID> -b <bossId> -d <downloadPath>
 ````
 
 ## Notes

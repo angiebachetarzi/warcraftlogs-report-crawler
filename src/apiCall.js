@@ -15,11 +15,11 @@ const getBossId = async () => {
         }
 
         // Filter the fights to find the boss id
-        const bossId = filterTab(reportGeneralInfo.data.fights, 'name', 'boss', argv.bossName);
+        const bossId = filterTab(reportGeneralInfo.data.fights, 'name', 'boss', argv.bossId);
 
         // If no bossId is found, throw an error
         if (!bossId) {
-            throw new Error(`Boss "${argv.bossName}" not found in the report.`);
+            throw new Error(`Boss "${argv.bossId}" not found in the report.`);
         }
 
         return bossId;

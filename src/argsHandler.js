@@ -10,19 +10,17 @@ const parseArgs = () => {
     description: 'The report ID',
     demandOption: true //make the argument required
   })
-  .option('bossName', {
+  .option('bossId', {
     alias: 'b',
+    type: 'number',
+    description: 'The id of the boss',
+    demandOption: false
+  })
+  .option('bossName', {
+    alias: 'n',
     type: 'string',
     description: 'The name of the boss',
-    demandOption: true
-  })
-  .option('reportType', {
-    alias: 't',
-    type: 'string',
-    description: 'The type of the report',
-    demandOption: true,
-    choices: ['damage-taken', 'damage-done', 'healing', 'threat', 'auras', 'deaths', 'interrupts', 'dispels', 'ressources', 'casts'],
-    default: 'damage-taken'
+    demandOption: false
   })
   .option('downloadLocation', {
     alias: 'd',
@@ -32,16 +30,12 @@ const parseArgs = () => {
   })
   .check((argv) => {
     // Check that the arguments are not null or undefined
-    if (argv.reportId == null || argv.bossName == null 
-      || argv.reportType == null || argv.downloadLocation == null) {
+    if (argv.reportId == null || (argv.bossId == null && argv.bossName == null)
+       || argv.downloadLocation == null) {
       throw new Error('All arguments must be present and not null');
     }
     if (!fs.existsSync(path.resolve(argv.downloadLocation))) {
       throw new Error(`The download location "${argv.downloadLocation}" does not exist.`);
-    }
-    const files = fs.readdirSync(argv.downloadLocation);
-    if (files.length > 1) {
-      throw new Error(`The download location needs to be an empty folder.`);
     }
     return true; // Validation passed
   })
