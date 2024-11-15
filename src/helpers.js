@@ -1,3 +1,4 @@
+const abilitiesPerBoss = require('../abilities');
 //filter a list of objects to find a field value using another field value
 //example: finding the boss id in a list of fights using the boss name
 const filterTab = (objectList, givenField, fieldToFind, givenFieldValue) => {
@@ -13,4 +14,10 @@ const filterTab = (objectList, givenField, fieldToFind, givenFieldValue) => {
     return null;
 }
 
-module.exports = filterTab
+// Function to get abilities by bossId
+const getAbilitiesByBossId = (bossId) => {
+    const boss = abilitiesPerBoss.find(boss => boss.bossId === bossId);
+    return boss ? boss.abilities : null; // Returns null if bossId not found
+}
+
+module.exports = {filterTab, getAbilitiesByBossId}

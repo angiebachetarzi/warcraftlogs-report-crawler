@@ -10,11 +10,17 @@ const parseArgs = () => {
     description: 'The report ID',
     demandOption: true //make the argument required
   })
-  .option('bossName', {
+  .option('bossId', {
     alias: 'b',
+    type: 'number',
+    description: 'The id of the boss',
+    demandOption: false
+  })
+  .option('bossName', {
+    alias: 'n',
     type: 'string',
     description: 'The name of the boss',
-    demandOption: true
+    demandOption: false
   })
   .option('downloadLocation', {
     alias: 'd',
@@ -24,7 +30,7 @@ const parseArgs = () => {
   })
   .check((argv) => {
     // Check that the arguments are not null or undefined
-    if (argv.reportId == null || argv.bossName == null
+    if (argv.reportId == null || (argv.bossId == null && argv.bossName == null)
        || argv.downloadLocation == null) {
       throw new Error('All arguments must be present and not null');
     }
